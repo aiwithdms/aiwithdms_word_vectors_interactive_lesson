@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Words to Vectors — AIwithDMS</title>
+<style>
+:root{--navy:#0b2140;--blue:#1769aa;--cyan:#69d7ef;--ink:#132b4b;--muted:#526982;--paper:#f4f8fc;--line:#d8e5f2;--green:#0b9277;--pink:#bf4cba;--orange:#d77b19}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 Inter,Segoe UI,Arial,sans-serif}
+header{background:linear-gradient(115deg,#081a34,#123e69 65%,#087f9f);color:white;padding:18px clamp(18px,5vw,64px);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:1.2rem;letter-spacing:.3px}.brand small{display:block;font-weight:400;font-size:.78rem;color:#c7eaff}
+nav{display:flex;gap:8px;flex-wrap:wrap}nav a{color:#e8f6ff;text-decoration:none;padding:7px 12px;border-radius:999px;font-size:.9rem}nav a:hover{background:#ffffff20}
+main{max-width:1180px;margin:auto;padding:24px clamp(14px,3vw,30px) 42px}
+.hero{border-radius:24px;padding:clamp(24px,5vw,52px);color:white;background:radial-gradient(circle at 83% 20%,#38c9e8 0,transparent 26%),linear-gradient(120deg,#0b2140,#12558b);display:grid;grid-template-columns:1.25fr .75fr;gap:24px;align-items:center;box-shadow:0 16px 35px #0b214020}
+.eyebrow{text-transform:uppercase;letter-spacing:2px;color:#9de9fa;font-size:.78rem;font-weight:800}.hero h1{font-size:clamp(2rem,4vw,3.3rem);line-height:1.08;margin:10px 0 16px}.hero p{max-width:650px;color:#e0f1ff;font-size:1.08rem}.hero-visual{display:flex;justify-content:center;align-items:center;min-height:190px}.word-pill{padding:9px 17px;border-radius:14px;background:#ffffff16;border:1px solid #ffffff45;font-weight:800;box-shadow:0 6px 18px #0002}.flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}.flow .arrow{color:#a7efff;font-size:1.4rem}.flow .result{background:#0e9478}
+.section-title{margin:34px 0 14px;font-size:1.55rem}.section-intro{color:var(--muted);margin-top:-7px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin-top:20px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 6px 20px #0b214009;min-width:0}.card h2{font-size:1.15rem;margin:0 0 8px}.num{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#e4f4ff;color:#0c5c98;margin-right:7px}.muted{color:var(--muted)}.callout{padding:12px 14px;border-radius:12px;background:#edf7ff;border:1px solid #d3eaff;font-size:.93rem;margin-top:15px}
+.vector-demo{display:flex;align-items:center;gap:18px;margin-top:16px}.axis{width:130px;height:130px;position:relative;border-left:2px solid #55708b;border-bottom:2px solid #55708b;flex-shrink:0;margin:8px 0 18px 10px}.axis:before{content:"";position:absolute;width:75px;height:3px;background:#1875c9;left:0;bottom:0;transform-origin:left;transform:rotate(-43deg)}.axis:after{content:"";position:absolute;left:65px;bottom:59px;width:9px;height:9px;background:#1875c9;border-radius:50%}.axis-label{position:absolute;font-size:.78rem;color:#60758b}.xlab{right:-4px;bottom:-25px}.ylab{left:-10px;top:-15px}.vector-value{font-weight:800;color:#1769aa;font-size:1.2rem}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.92rem}th,td{padding:8px 9px;text-align:center;border-bottom:1px solid var(--line)}th{background:#eff7fd;color:#274c70}td:first-child{text-align:left;font-weight:700}.king{color:#1769aa}.man{color:var(--orange)}.woman{color:var(--pink)}.queen{color:var(--green)}
+.formula{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:15px 8px;background:#f3f8fd;border:1px solid var(--line);border-radius:14px;margin:16px 0}.term{padding:7px 10px;border-radius:9px;font-weight:800;background:white;border:1px solid var(--line)}.term.king{background:#e6f3ff}.term.man{background:#fff0dc}.term.woman{background:#fceaff}.term.queen{background:#dff8ef}.operator{font-size:1.2rem;font-weight:800;color:#637a91}
+.interactive{background:linear-gradient(145deg,#fff,#eef8ff);border:1px solid #cfe5f6}.controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.controls label{font-size:.9rem;font-weight:700;display:block}.controls input{width:100%;accent-color:#1769aa}.readout{padding:15px;background:#0d294b;color:white;border-radius:13px;text-align:center;margin-top:14px}.readout strong{font-size:1.5rem;display:block}.bar{height:10px;border-radius:99px;background:#dce8f2;overflow:hidden;margin-top:8px}.bar span{height:100%;display:block;background:linear-gradient(90deg,#1684d1,#13b8a0);width:65%;transition:width .2s}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.step{background:white;border:1px solid var(--line);padding:16px;border-radius:14px}.step b{display:block;margin-bottom:5px;color:#1769aa}.takeaways{display:grid;grid-template-columns:1fr 1fr;gap:12px}.takeaway{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);padding:14px;border-radius:13px}.check{background:#d9f7eb;color:#08765d;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;flex-shrink:0;font-weight:900}
+footer{background:#0b2140;color:#d6eaff;text-align:center;padding:25px 16px}footer strong{color:#fff}
+button{border:0;background:#1769aa;color:white;font-weight:800;padding:10px 16px;border-radius:10px;cursor:pointer}button:hover{background:#0d4f86}.small{font-size:.83rem}
+@media(max-width:850px){.hero{grid-template-columns:1fr}.hero-visual{min-height:100px}.grid{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.grid,.takeaways,.controls{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.vector-demo{flex-wrap:wrap}.hero{padding:24px}.hero h1{font-size:2.1rem}header{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header><div class="brand">◉ AIwithDMS <small>Education Through Technology</small></div><nav><a href="#vector">Vector</a><a href="#embedding">Embedding</a><a href="#analogy">King analogy</a><a href="#try">Try it</a></nav></header>
+<main>
+<section class="hero">
+<div><div class="eyebrow">A simple visual lesson</div><h1>From Words to Vectors to AI Meaning</h1><p>Computers work with numbers. Word embeddings help AI represent words as numbers so it can compare patterns, relationships and meaning.</p><div class="formula" style="justify-content:flex-start;background:#ffffff12;border-color:#ffffff30"><span class="term king">King</span><span class="operator" style="color:white">−</span><span class="term man">Man</span><span class="operator" style="color:white">+</span><span class="term woman">Woman</span><span class="operator" style="color:white">≈</span><span class="term queen">Queen</span></div></div>
+<div class="hero-visual"><div class="flow"><span class="word-pill king">KING</span><span class="arrow">→</span><span class="word-pill man">MAN</span><span class="arrow">+</span><span class="word-pill woman">WOMAN</span><span class="arrow">→</span><span class="word-pill result">QUEEN</span></div></div>
+</section>
+<h2 class="section-title" id="vector">1. What is a vector?</h2><p class="section-intro">Think of a vector as a list of numbers, or a location on a map.</p>
+<div class="grid">
+<article class="card"><h2><span class="num">A</span>A point on a map</h2><p>On a simple map, <b>[3, 2]</b> means move 3 along X and 2 along Y. Those coordinates locate a point.</p><div class="vector-demo"><div class="axis"><span class="axis-label xlab">X →</span><span class="axis-label ylab">↑ Y</span></div><div><div class="vector-value">[3, 2]</div><p class="muted small">Two numbers describe a position.</p></div></div></article>
+<article class="card" id="embedding"><h2><span class="num">B</span>Words become numbers</h2><p>A <b>word embedding</b> model turns a word into a numerical vector that reflects patterns learned from how words are used.</p><div class="callout"><b>Word</b> → <b>Embedding model</b> → <b>Vector</b><br><span class="muted">The numbers are learned from text; they are not manually assigned definitions.</span></div></article>
+<article class="card"><h2><span class="num">C</span>Many dimensions</h2><p>Our map has only 2 dimensions. Real word embeddings often use hundreds or thousands of numbers.</p><div class="formula"><span class="term">[0.12</span><span class="term">−0.48</span><span class="term">0.91</span><span class="operator">…</span></div><p class="muted small">Usually, each number does not have one simple human-readable meaning.</p></article>
+</div>
+<h2 class="section-title" id="analogy">2. The famous word-vector analogy</h2><p class="section-intro">The model learns from language patterns that some relationships between words are similar.</p>
+<div class="grid">
+<article class="card"><h2>Look at the relationship</h2><p>In this classic example, the change from <b>man → king</b> is approximately like the change from <b>woman → queen</b> in the learned vector space.</p><div class="formula"><span class="term man">Man</span><span class="operator">→</span><span class="term king">King</span></div><div class="formula"><span class="term woman">Woman</span><span class="operator">→</span><span class="term queen">Queen</span></div></article>
+<article class="card"><h2>Vector arithmetic</h2><p>Each word is replaced with its vector. The model does arithmetic on those vectors—not on the spelling of the words.</p><div class="formula"><span class="term king">v(King)</span><span class="operator">−</span><span class="term man">v(Man)</span><span class="operator">+</span><span class="term woman">v(Woman)</span></div><p class="muted">The result is a target point in embedding space.</p></article>
+<article class="card"><h2>Find the closest word</h2><p>The system compares the target vector with vectors for words in its vocabulary. If <b>Queen</b> is the closest match, it returns Queen.</p><div class="callout"><b>Important:</b> the result is approximate. Different models can return different answers, and embeddings can reflect biases in their training text.</div></article>
+</div>
+<h2 class="section-title" id="try">3. Try vector arithmetic (illustrative numbers)</h2><p class="section-intro">Move the sliders and watch the arithmetic. These toy values demonstrate the calculation only; they are not real Word2Vec embeddings.</p>
+<div class="card interactive">
+<div class="formula"><span class="term king">King [<span id="kx">8</span>, <span id="ky">6</span>]</span><span class="operator">−</span><span class="term man">Man [5, 4]</span><span class="operator">+</span><span class="term woman">Woman [5, 2]</span></div>
+<div class="controls">
+<div><label for="kingX">King — dimension 1: <span id="kxLabel">8</span></label><input id="kingX" type="range" min="0" max="10" value="8"></div>
+<div><label for="kingY">King — dimension 2: <span id="kyLabel">6</span></label><input id="kingY" type="range" min="0" max="10" value="6"></div>
+</div>
+<div class="readout"><span>Calculated target vector</span><strong id="result">[8, 4]</strong><span class="small" id="explain">8 − 5 + 5 = 8; 6 − 4 + 2 = 4</span><div class="bar"><span id="bar"></span></div></div>
+</div>
+<h2 class="section-title">4. Where do embeddings help?</h2>
+<div class="steps">
+<div class="step"><b>Semantic search</b>Find results by meaning, not just exact keywords.</div>
+<div class="step"><b>Chatbots</b>Help systems connect a question with related language patterns.</div>
+<div class="step"><b>Recommendations</b>Find items or content that are related to a user's interests.</div>
+<div class="step"><b>Text analysis</b>Support classification, clustering and other language tasks.</div>
+</div>
+<h2 class="section-title">5. Remember these four ideas</h2>
+<div class="takeaways">
+<div class="takeaway"><span class="check">✓</span><div><b>Vector</b><br>A list of numbers.</div></div>
+<div class="takeaway"><span class="check">✓</span><div><b>Embedding</b><br>A model's numerical representation of a word or other input.</div></div>
+<div class="takeaway"><span class="check">✓</span><div><b>Similarity and relationships</b><br>Vectors let a model compare learned patterns in a mathematical space.</div></div>
+<div class="takeaway"><span class="check">✓</span><div><b>Analogy</b><br><i>King − Man + Woman ≈ Queen</i> is a famous example, not a universal rule.</div></div>
+</div>
+<div class="callout" style="margin-top:22px"><b>One-minute explanation you can say aloud:</b><br>“A vector is a list of numbers. A word embedding model turns words into vectors based on patterns in language. Once words are represented as points in a mathematical space, we can compare their relationships. That is the idea behind the classic example King minus Man plus Woman approximately gives Queen.”</div>
+</main>
+<footer><strong>AIwithDMS</strong> · Education Through Technology<br><span class="small">Learn the idea • See the pattern • Explain it simply</span></footer>
+<script>
+const x=document.getElementById('kingX'), y=document.getElementById('kingY');
+function update(){const a=Number(x.value),b=Number(y.value),r1=a-5+5,r2=b-4+2;document.getElementById('kx').textContent=a;document.getElementById('ky').textContent=b;document.getElementById('kxLabel').textContent=a;document.getElementById('kyLabel').textContent=b;document.getElementById('result').textContent=`[${r1}, ${r2}]`;document.getElementById('explain').textContent=`${a} − 5 + 5 = ${r1}; ${b} − 4 + 2 = ${r2}`;document.getElementById('bar').style.width=(Math.max(0,Math.min(100,(r1+r2)/20*100)))+'%'}
+x.addEventListener('input',update);y.addEventListener('input',update);update();
+</script>
+</body>
+</html>
